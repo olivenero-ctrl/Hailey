@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>🐶 Hailey's Study Zone</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700;900&family=Baloo+2:wght@700;800&display=swap');
+
+:root {
+  --bg:#fff5f8; --panel:#ffffff; --border:#f0c8d8;
+  --pink:#ff6b9d; --pink2:#ff8fb3; --pink3:#ffc2d4;
+  --mint:#5dd9c1; --yellow:#ffd166; --purple:#c77dff;
+  --text:#4a3040; --dim:#b07898;
+}
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+
+body {
+  background: var(--bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  background-image:
+    radial-gradient(circle at 10% 20%, rgba(255,107,157,.12) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(93,217,193,.10) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(255,209,102,.06) 0%, transparent 60%);
+}
+
+.hero {
+  font-size: 5rem;
+  margin-bottom: 10px;
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+
+.title {
+  font-family: 'Jua', sans-serif;
+  font-size: clamp(1.3rem, 5vw, 2rem);
+  color: var(--pink);
+  text-shadow: 0 3px 12px rgba(255,107,157,.3);
+  text-align: center;
+  margin-bottom: 4px;
+}
+.subtitle {
+  font-size: .82rem;
+  color: var(--dim);
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  max-width: 360px;
+}
+
+.menu-card {
+  background: var(--panel);
+  border: 2.5px solid var(--border);
+  border-radius: 22px;
+  padding: 22px 20px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  cursor: pointer;
+  transition: transform .15s, border-color .2s, box-shadow .2s;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(255,107,157,.08);
+}
+.menu-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  border-radius: 22px 22px 0 0;
+}
+.menu-card.quiz::before { background: linear-gradient(90deg, var(--pink), var(--yellow)); }
+.menu-card.plan::before { background: linear-gradient(90deg, var(--mint), var(--purple)); }
+
+.menu-card:active { transform: scale(.97); }
+.menu-card.quiz:hover { border-color: var(--pink2); box-shadow: 0 6px 24px rgba(255,107,157,.22); }
+.menu-card.plan:hover { border-color: var(--mint); box-shadow: 0 6px 24px rgba(93,217,193,.2); }
+
+.card-icon { font-size: 2.8rem; flex-shrink: 0; }
+.card-info { flex: 1; }
+.card-title {
+  font-family: 'Jua', sans-serif;
+  font-size: 1.05rem;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.card-sub { font-size: .78rem; color: var(--dim); line-height: 1.5; }
+.card-arrow { font-size: 1.2rem; color: var(--pink3); }
+
+.footer {
+  margin-top: 32px;
+  font-size: .72rem;
+  color: var(--pink3);
+  text-align: center;
+}
+
+/* Floating hearts */
+.hearts {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.heart {
+  position: absolute;
+  font-size: var(--s, 1rem);
+  animation: rise var(--d, 6s) ease-in infinite var(--dl, 0s);
+  opacity: 0;
+}
+@keyframes rise {
+  0% { transform: translateY(100vh) rotate(0deg); opacity: .6; }
+  100% { transform: translateY(-10vh) rotate(20deg); opacity: 0; }
+}
+</style>
+</head>
+<body>
+
+<div class="hearts" id="hearts"></div>
+
+<div style="position:relative;z-index:1;width:100%;display:flex;flex-direction:column;align-items:center;">
+  <div class="hero">🐶</div>
+  <div class="title">Hailey's Study Zone 💕</div>
+  <div class="subtitle">어떤 걸 할까요?</div>
+
+  <div class="menu">
+    <a class="menu-card quiz" href="quiz.html">
+      <div class="card-icon">📝</div>
+      <div class="card-info">
+        <div class="card-title">Eagle 단어 퀴즈 🦅</div>
+        <div class="card-sub">단어 퀴즈 · 시간제한 · 아이템 · 랭킹</div>
+      </div>
+      <div class="card-arrow">▶</div>
+    </a>
+
+    <a class="menu-card plan" href="planner.html">
+      <div class="card-icon">🗓️</div>
+      <div class="card-info">
+        <div class="card-title">여름방학 플래너 🌸</div>
+        <div class="card-sub">학습 플래너 · XP · 코인 · 업적</div>
+      </div>
+      <div class="card-arrow">▶</div>
+    </a>
+  </div>
+
+  <div class="footer">✨ Have a great summer, Hailey! ✨</div>
+</div>
+
+<script>
+const hearts = document.getElementById('hearts');
+const emojis = ['🌸','💕','⭐','🌺','💫','🎀','🍭'];
+for(let i=0;i<25;i++){
+  const h=document.createElement('div');
+  h.className='heart';
+  h.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+  h.style.cssText=`left:${Math.random()*100}%;--s:${0.7+Math.random()*1.2}rem;--d:${5+Math.random()*8}s;--dl:${Math.random()*6}s;`;
+  hearts.appendChild(h);
+}
+</script>
+</body>
+</html>

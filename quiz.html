@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>🦅 Eagle 단어 퀴즈</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Baloo+2:wght@700;800&display=swap');
+
+:root {
+  --sky:#29B6F6; --deep:#0277BD; --sun:#FFD600; --sun2:#FF8F00;
+  --green:#43A047; --red:#E53935; --purple:#7B1FA2; --orange:#F57C00;
+  --bg:#E3F2FD; --card:#fff; --text:#1A237E; --muted:#607D8B;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Noto Sans KR',sans-serif;background:linear-gradient(160deg,#B3E5FC,#E3F2FD 50%,#B2EBF2);min-height:100vh;overflow-x:hidden;}
+
+.hdr{background:linear-gradient(135deg,var(--deep),var(--sky));padding:12px 14px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 3px 12px rgba(2,119,189,.3);}
+.hdr-left{display:flex;align-items:center;gap:10px;}
+.btn-home{background:rgba(255,255,255,.2);border:none;border-radius:10px;padding:6px 10px;color:#fff;font-size:.75rem;font-weight:700;font-family:inherit;cursor:pointer;}
+.btn-home:active{transform:scale(.93);}
+.hdr-title{font-family:'Baloo 2',cursive;font-size:1.25rem;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.2);}
+.hdr-right{display:flex;gap:8px;align-items:center;}
+.chip{background:var(--sun);color:#6D4C00;font-weight:900;font-size:.82rem;padding:4px 12px;border-radius:99px;box-shadow:0 2px 8px rgba(255,214,0,.4);}
+.chip.pop{animation:chipPop .3s ease;}
+@keyframes chipPop{0%,100%{transform:scale(1)}50%{transform:scale(1.4)}}
+.timer-chip{background:#fff;color:var(--deep);font-weight:900;font-size:.82rem;padding:4px 12px;border-radius:99px;border:2px solid var(--sky);min-width:54px;text-align:center;transition:background .3s,color .3s,border-color .3s;}
+.timer-chip.warn{background:#FFF9C4;color:var(--orange);border-color:var(--orange);}
+.timer-chip.danger{background:#FFEBEE;color:var(--red);border-color:var(--red);animation:pulse .5s ease infinite;}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+
+.prog-wrap{background:rgba(255,255,255,.3);height:6px;overflow:hidden;}
+.prog-bar{height:100%;background:var(--sun);transition:width .5s;box-shadow:0 0 8px rgba(255,214,0,.6);}
+
+.streak-wrap{padding:8px 14px 0;max-width:500px;margin:0 auto;}
+.streak-row{display:flex;gap:4px;justify-content:center;margin-bottom:4px;}
+.streak-dot{width:22px;height:22px;border-radius:50%;background:#CFD8DC;transition:all .3s;font-size:.7rem;display:flex;align-items:center;justify-content:center;}
+.streak-dot.on{background:var(--sun);box-shadow:0 0 8px rgba(255,214,0,.6);}
+.streak-dot.fire{background:linear-gradient(135deg,#FF6F00,#FFD600);animation:fireGlow .8s ease infinite alternate;}
+@keyframes fireGlow{from{box-shadow:0 0 6px rgba(255,111,0,.6)}to{box-shadow:0 0 14px rgba(255,214,0,.9)}}
+.streak-label{text-align:center;font-size:.72rem;color:var(--muted);font-weight:700;min-height:18px;}
+
+.items-bar{display:flex;gap:8px;padding:6px 14px;max-width:500px;margin:0 auto;justify-content:flex-end;}
+.item-btn{background:var(--card);border:2.5px solid #CFD8DC;border-radius:14px;padding:6px 12px;font-size:.8rem;font-weight:700;color:var(--text);cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.item-btn:active{transform:scale(.93);}
+.item-btn.hint{border-color:var(--purple);color:var(--purple);}
+.item-btn.complete{border-color:var(--orange);color:var(--orange);}
+.item-btn:disabled{opacity:.35;pointer-events:none;}
+.item-count{background:var(--purple);color:#fff;border-radius:99px;padding:1px 6px;font-size:.68rem;}
+.item-count.orange{background:var(--orange);}
+
+.main{padding:8px 14px 80px;max-width:500px;margin:0 auto;}
+
+.q-card{background:var(--card);border-radius:22px;padding:20px 18px 16px;box-shadow:0 6px 24px rgba(2,119,189,.14);margin-bottom:12px;position:relative;overflow:hidden;animation:slideIn .35s cubic-bezier(.4,0,.2,1);}
+@keyframes slideIn{from{transform:translateY(18px);opacity:0}to{transform:translateY(0);opacity:1}}
+.q-card::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,var(--sky),var(--sun),var(--sky));background-size:200%;animation:shimmer 3s linear infinite;}
+@keyframes shimmer{to{background-position:-200% 0}}
+.q-type{font-size:.7rem;font-weight:700;color:var(--sky);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.q-num{background:var(--bg);color:var(--deep);font-size:.68rem;font-weight:900;padding:2px 8px;border-radius:99px;}
+.q-body{color:var(--text);font-size:1.08rem;font-weight:700;line-height:1.65;}
+.q-blank{display:inline-block;min-width:90px;border-bottom:3px solid var(--sky);color:var(--sky);text-align:center;padding:0 4px;font-style:italic;}
+.q-hint{font-size:.78rem;color:var(--muted);font-weight:400;margin-top:8px;padding:8px 10px;background:#F5F5F5;border-radius:10px;line-height:1.5;}
+.hint-reveal{color:var(--purple);font-weight:700;background:#F3E5F5;border-radius:6px;padding:2px 6px;margin-top:6px;display:inline-block;font-size:.82rem;}
+
+.timer-bar-wrap{background:#EEF2F7;border-radius:99px;height:8px;overflow:hidden;margin-bottom:12px;}
+.timer-bar{height:100%;border-radius:99px;transition:width .1s linear,background .5s;}
+
+.input-area{display:flex;gap:8px;margin-bottom:10px;}
+.ans-input{flex:1;border:2.5px solid #CFD8DC;border-radius:16px;padding:13px 15px;font-size:1rem;font-family:inherit;color:var(--text);background:#fff;outline:none;transition:all .2s;}
+.ans-input:focus{border-color:var(--sky);box-shadow:0 0 0 4px rgba(41,182,246,.15);}
+.ans-input.ok{border-color:var(--green);background:#E8F5E9;box-shadow:0 0 0 4px rgba(67,160,71,.15);}
+.ans-input.no{border-color:var(--red);background:#FFEBEE;box-shadow:0 0 0 4px rgba(229,57,53,.15);}
+.btn-check{background:linear-gradient(135deg,var(--deep),var(--sky));color:#fff;border:none;border-radius:16px;padding:13px 18px;font-size:1rem;font-weight:700;font-family:inherit;cursor:pointer;box-shadow:0 4px 14px rgba(2,119,189,.35);white-space:nowrap;}
+.btn-check:active{transform:scale(.95);}
+
+.feedback{border-radius:16px;padding:12px 14px;font-weight:700;font-size:.9rem;display:none;margin-bottom:10px;animation:popIn .25s ease;line-height:1.5;}
+@keyframes popIn{from{transform:scale(.88);opacity:0}to{transform:scale(1);opacity:1}}
+.feedback.ok{background:#E8F5E9;color:var(--green);display:block;}
+.feedback.no{background:#FFEBEE;color:var(--red);display:block;}
+.feedback.timeout{background:#FFF8E1;color:var(--orange);display:block;}
+
+.btn-next{display:none;width:100%;background:linear-gradient(135deg,#388E3C,var(--green));color:#fff;border:none;border-radius:16px;padding:15px;font-size:1rem;font-weight:900;font-family:inherit;cursor:pointer;box-shadow:0 4px 16px rgba(67,160,71,.35);letter-spacing:.5px;}
+.btn-next.show{display:block;animation:popIn .25s ease;}
+.btn-next:active{transform:scale(.97);}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:flex;align-items:center;justify-content:center;animation:fadeIn .2s ease;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:#fff;border-radius:28px;padding:28px 22px;max-width:340px;width:90%;text-align:center;box-shadow:0 12px 48px rgba(0,0,0,.25);animation:modalPop .35s cubic-bezier(.4,0,.2,1);}
+@keyframes modalPop{from{transform:scale(.7) translateY(30px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.modal-emoji{font-size:4rem;margin-bottom:10px;}
+.modal-title{font-size:1.3rem;font-weight:900;color:var(--text);margin-bottom:6px;}
+.modal-sub{color:var(--muted);font-size:.85rem;margin-bottom:20px;line-height:1.5;}
+.modal-items{display:flex;gap:10px;justify-content:center;margin-bottom:20px;}
+.modal-item{background:#F3E5F5;border-radius:16px;padding:14px 16px;flex:1;cursor:pointer;border:2.5px solid transparent;transition:all .2s;}
+.modal-item:active{transform:scale(.95);}
+.modal-item .mi-icon{font-size:2rem;margin-bottom:6px;}
+.modal-item .mi-name{font-size:.8rem;font-weight:700;color:var(--purple);}
+.modal-item.orange-item{background:#FFF3E0;}
+.modal-item.orange-item .mi-name{color:var(--orange);}
+.btn-modal{width:100%;background:linear-gradient(135deg,var(--deep),var(--sky));color:#fff;border:none;border-radius:14px;padding:14px;font-size:1rem;font-weight:700;font-family:inherit;cursor:pointer;}
+
+#resultScreen{display:none;padding:16px 14px 60px;max-width:500px;margin:0 auto;animation:slideIn .4s ease;}
+.res-card{background:var(--card);border-radius:24px;padding:26px 20px 20px;text-align:center;box-shadow:0 8px 32px rgba(2,119,189,.18);margin-bottom:14px;}
+.res-emoji{font-size:4.5rem;margin-bottom:8px;}
+.res-msg{font-size:1.35rem;font-weight:900;color:var(--text);margin-bottom:4px;}
+.res-sub{color:var(--muted);font-size:.85rem;margin-bottom:16px;}
+.res-score{font-family:'Baloo 2',cursive;font-size:3.8rem;font-weight:800;color:var(--deep);line-height:1;}
+.res-denom{color:var(--muted);font-size:.85rem;margin-top:2px;}
+.res-bonus{color:var(--sun2);font-size:.8rem;font-weight:700;margin-top:4px;}
+.stars{display:flex;justify-content:center;gap:8px;margin:10px 0 12px;}
+.star{font-size:2.2rem;opacity:.2;transition:all .4s;}
+.star.on{opacity:1;animation:starPop .5s cubic-bezier(.4,0,.2,1);}
+@keyframes starPop{0%{transform:scale(0) rotate(-30deg)}70%{transform:scale(1.3) rotate(5deg)}100%{transform:scale(1) rotate(0)}}
+.pass-badge{display:inline-block;padding:5px 20px;border-radius:99px;font-weight:900;font-size:.88rem;margin-bottom:12px;}
+.pass-badge.yes{background:#E8F5E9;color:var(--green);}
+.pass-badge.no{background:#FFEBEE;color:var(--red);}
+.prog-result{background:#EEF2F7;border-radius:99px;height:12px;overflow:hidden;margin:10px 0 4px;}
+.prog-result-fill{height:100%;border-radius:99px;transition:width 1.2s;}
+
+.name-section{background:var(--card);border-radius:20px;padding:18px;margin-bottom:12px;box-shadow:0 4px 16px rgba(2,119,189,.1);}
+.name-label{font-size:.85rem;font-weight:700;color:var(--text);margin-bottom:10px;}
+.name-row{display:flex;gap:8px;}
+.name-input{flex:1;border:2.5px solid #CFD8DC;border-radius:12px;padding:11px 13px;font-size:.95rem;font-family:inherit;color:var(--text);outline:none;}
+.name-input:focus{border-color:var(--sky);}
+.btn-save{background:linear-gradient(135deg,var(--sun2),var(--sun));color:#fff;border:none;border-radius:12px;padding:11px 16px;font-weight:700;font-family:inherit;cursor:pointer;font-size:.9rem;white-space:nowrap;}
+
+.lb-card{background:var(--card);border-radius:20px;padding:16px;margin-bottom:12px;box-shadow:0 4px 16px rgba(2,119,189,.1);}
+.lb-title{font-size:.85rem;font-weight:900;color:var(--text);margin-bottom:10px;}
+.lb-row{display:flex;align-items:center;gap:10px;padding:8px 6px;border-bottom:1px solid #F5F5F5;font-size:.83rem;}
+.lb-row:last-child{border-bottom:none;}
+.lb-rank{font-weight:900;color:var(--muted);min-width:24px;text-align:center;}
+.lb-rank.gold{color:#FFD600;font-size:1.1rem;} .lb-rank.silver{color:#B0BEC5;font-size:1.05rem;} .lb-rank.bronze{color:#A1887F;}
+.lb-name{flex:1;font-weight:700;color:var(--text);}
+.lb-score{font-weight:900;color:var(--deep);}
+.lb-time{color:var(--muted);font-size:.75rem;margin-left:4px;}
+
+.section-lbl{font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin:14px 0 6px 2px;}
+.rev-item{background:var(--card);border-radius:14px;padding:10px 12px;margin-bottom:6px;display:flex;align-items:flex-start;gap:8px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-left:4px solid transparent;font-size:.82rem;}
+.rev-item.ok{border-color:var(--green);} .rev-item.no{border-color:var(--red);} .rev-item.skip{border-color:var(--orange);}
+.rev-icon{font-size:1rem;flex-shrink:0;margin-top:1px;}
+.rev-q{color:var(--text);font-weight:700;}
+.rev-a{color:var(--muted);font-size:.76rem;margin-top:1px;}
+.rev-a b{color:var(--green);}
+
+.btn-retry{width:100%;background:linear-gradient(135deg,var(--deep),var(--sky));color:#fff;border:none;border-radius:18px;padding:16px;font-size:1.05rem;font-weight:900;font-family:inherit;cursor:pointer;box-shadow:0 5px 18px rgba(2,119,189,.35);margin-top:8px;letter-spacing:.5px;}
+.btn-retry:active{transform:scale(.97);}
+.btn-home-result{width:100%;background:linear-gradient(135deg,#37474F,#607D8B);color:#fff;border:none;border-radius:18px;padding:14px;font-size:.95rem;font-weight:700;font-family:inherit;cursor:pointer;margin-top:8px;}
+
+#confettiCanvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;}
+.correct-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:999;}
+.correct-burst{font-size:4.5rem;opacity:0;transform:scale(0);}
+.correct-burst.show{animation:burst .7s cubic-bezier(.4,0,.2,1) forwards;}
+@keyframes burst{0%{opacity:0;transform:scale(0) rotate(-10deg)}40%{opacity:1;transform:scale(1.3) rotate(4deg)}70%{opacity:1;transform:scale(1.1)}100%{opacity:0;transform:scale(1.4)}}
+.shake{animation:shake .4s ease;}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+</style>
+</head>
+<body>
+
+<canvas id="confettiCanvas"></canvas>
+<div class="correct-overlay"><div class="correct-burst" id="correctBurst"></div></div>
+
+<div id="quizScreen">
+  <div class="hdr">
+    <div class="hdr-left">
+      <button class="btn-home" onclick="location.href='index.html'">🏠 홈</button>
+      <div class="hdr-title">🦅 Eagle Quiz</div>
+    </div>
+    <div class="hdr-right">
+      <div class="timer-chip" id="timerChip">⏱ 15</div>
+      <div class="chip" id="scoreChip">⭐ 0</div>
+    </div>
+  </div>
+  <div class="prog-wrap"><div class="prog-bar" id="progBar" style="width:0%"></div></div>
+
+  <div class="streak-wrap">
+    <div class="streak-row" id="streakRow"></div>
+    <div class="streak-label" id="streakLabel"></div>
+  </div>
+
+  <div class="items-bar">
+    <button class="item-btn hint" id="btnHint" onclick="useItem('hint')" disabled>
+      💡 첫글자 힌트 <span class="item-count" id="hintCount">0</span>
+    </button>
+    <button class="item-btn complete" id="btnComplete" onclick="useItem('complete')" disabled>
+      ✨ 단어완성 <span class="item-count orange" id="completeCount">0</span>
+    </button>
+  </div>
+
+  <div class="main">
+    <div class="timer-bar-wrap"><div class="timer-bar" id="timerBar"></div></div>
+    <div class="q-card" id="qCard">
+      <div class="q-type">
+        <span id="qTypeLabel"></span>
+        <span class="q-num" id="qNum"></span>
+      </div>
+      <div class="q-body" id="qBody"></div>
+      <div class="q-hint" id="qHint" style="display:none"></div>
+      <div class="hint-reveal" id="hintReveal" style="display:none"></div>
+    </div>
+    <div class="input-area">
+      <input class="ans-input" id="ansInput" type="text" placeholder="답을 써요!" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
+      <button class="btn-check" onclick="check()">확인 ✓</button>
+    </div>
+    <div class="feedback" id="feedback"></div>
+    <button class="btn-next" id="btnNext" onclick="next()"></button>
+  </div>
+</div>
+
+<div id="rewardModal" style="display:none">
+  <div class="modal-overlay">
+    <div class="modal">
+      <div class="modal-emoji">🎁</div>
+      <div class="modal-title">10연속 정답! 아이템 획득!</div>
+      <div class="modal-sub">원하는 아이템을 하나 골라요!</div>
+      <div class="modal-items">
+        <div class="modal-item" onclick="pickItem('hint')">
+          <div class="mi-icon">💡</div>
+          <div class="mi-name">첫글자 힌트</div>
+        </div>
+        <div class="modal-item orange-item" onclick="pickItem('complete')">
+          <div class="mi-icon">✨</div>
+          <div class="mi-name">단어 완성</div>
+        </div>
+      </div>
+      <button class="btn-modal" onclick="closeModal()">나중에 고를게요</button>
+    </div>
+  </div>
+</div>
+
+<div id="resultScreen">
+  <div class="res-card">
+    <div class="res-emoji" id="resEmoji"></div>
+    <div class="res-msg" id="resMsg"></div>
+    <div class="res-sub" id="resSub"></div>
+    <div class="res-score" id="resScore"></div>
+    <div class="res-denom" id="resDenom"></div>
+    <div class="res-bonus" id="resBonus"></div>
+    <div class="stars">
+      <span class="star" id="st1">⭐</span>
+      <span class="star" id="st2">⭐</span>
+      <span class="star" id="st3">⭐</span>
+    </div>
+    <div class="pass-badge" id="passBadge"></div>
+    <div class="prog-result"><div class="prog-result-fill" id="resFill"></div></div>
+  </div>
+
+  <div class="name-section">
+    <div class="name-label">🏆 기록 저장하기</div>
+    <div class="name-row">
+      <input class="name-input" id="nameInput" type="text" placeholder="이름을 써요!" maxlength="8">
+      <button class="btn-save" onclick="saveRecord()">저장!</button>
+    </div>
+    <div id="saveMsg" style="font-size:.78rem;color:var(--green);margin-top:6px;display:none;">✅ 저장됐어요!</div>
+  </div>
+
+  <div class="lb-card">
+    <div class="lb-title">🏅 명예의 전당</div>
+    <div id="leaderboard"></div>
+  </div>
+
+  <div class="section-lbl">📋 문제 리뷰</div>
+  <div id="reviewList"></div>
+  <button class="btn-retry" onclick="init()">🔄 다시 도전!</button>
+  <button class="btn-home-result" onclick="location.href='index.html'">🏠 홈으로</button>
+</div>
+
+<script>
+const CHUNKS=[
+  {chunk:"occupy the position",def:"그 지위를 차지하다"},
+  {chunk:"weather fluctuation",def:"기상 변화"},
+  {chunk:"radiation poisoning",def:"방사선 중독"},
+  {chunk:"considerable tax revenue",def:"상당한 양의 세금 수입"},
+  {chunk:"upper atmosphere",def:"상부 대기권"},
+  {chunk:"price stability",def:"물가 안정"},
+  {chunk:"instill confidence",def:"자신감을 심어주다"},
+  {chunk:"tooth decay",def:"충치"},
+  {chunk:"a high degree of accuracy",def:"고도의 정밀함"},
+  {chunk:"fictional characters",def:"가상 인물"},
+  {chunk:"geared toward the younger",def:"젊은 층에 맞춰진"},
+  {chunk:"classical literature",def:"고전 문학"},
+  {chunk:"appropriate epithet",def:"적절한 별칭"},
+  {chunk:"lure with bait",def:"미끼로 유인하다"},
+  {chunk:"livestock farming",def:"목축업"},
+  {chunk:"optimistic view",def:"낙관적인 견해"},
+  {chunk:"commodity exchange",def:"상품 거래소"},
+  {chunk:"rebut an allegation",def:"혐의를 반박하다"},
+  {chunk:"patriarchal family",def:"가부장적 가정"},
+  {chunk:"benign smile",def:"상냥한 미소"}
+];
+const SENTENCES=[
+  {sentence:"Conditions in a forest are quite ___ from those in an open field bordering it.",answer:"different",hint:"💡 숲과 인접한 들판의 환경은 꽤 ___ 합니다."},
+  {sentence:"Each ___ of an environment has a critical influence on the plants and animals that live there.",answer:"factor",hint:"💡 환경의 각 ___는 동식물에 중요한 영향을 줍니다."},
+  {sentence:"If an organism is to live in a certain ___, it must be able to obtain the resources it needs.",answer:"habitat",hint:"💡 생물이 특정 ___에서 살려면 자원을 얻어야 합니다."},
+  {sentence:"An organism's ability to ___ a variety of environmental conditions is called its tolerance.",answer:"withstand",hint:"💡 다양한 환경을 ___하는 능력을 내성이라 합니다."},
+  {sentence:"The Earth's ___ has a vital role to play in the natural processes which affect us daily.",answer:"core",hint:"💡 지구의 ___는 자연 과정에서 중요한 역할을 합니다."},
+  {sentence:"A number of characteristics of the Earth's core have been revealed by ___ research.",answer:"seismological",hint:"💡 지구 핵의 특성들이 ___ 연구로 밝혀졌습니다."},
+  {sentence:"Without its magnetic field, the Earth would be subjected to more cosmic ___.",answer:"radiation",hint:"💡 자기장이 없으면 지구는 더 많은 우주 ___에 노출됩니다."},
+  {sentence:"___, the circulatory motion of a fluid involving the transfer of heat, is vital to the magnetic dynamo.",answer:"Convection",hint:"💡 열 전달을 수반하는 유체의 순환 운동을 ___이라 합니다."},
+  {sentence:"This heat was ___ inside the core when the outer mantle hardened.",answer:"trapped",hint:"💡 외부 맨틀이 굳을 때 이 열은 핵 안에 ___ 되었습니다."},
+  {sentence:"Even if the tiger were to be anointed its rightful crown, it may be in ___.",answer:"vain",hint:"💡 호랑이가 왕관을 받아도 소용 ___일 수 있습니다."},
+  {sentence:"Conservationists have redoubled their efforts to ___ the root causes of the shrinking numbers.",answer:"address",hint:"💡 보전론자들은 개체수 감소의 근본 원인을 ___하려 합니다."},
+  {sentence:"___ has been a major factor in the habitat loss.",answer:"Deforestation",hint:"💡 ___는 서식지 손실의 주요 원인이었습니다."},
+  {sentence:"Farming is another threat that often ___ deforestation.",answer:"accompanies",hint:"💡 농업은 삼림 벌채를 ___하는 또 다른 위협입니다."},
+  {sentence:"To protect their ___, farmers will trap and shoot tigers.",answer:"livelihood",hint:"💡 농부들은 자신의 ___를 보호하기 위해 호랑이를 포획합니다."},
+  {sentence:"The second Fugitive Slave Act ___ anyone who aided runaway slaves.",answer:"punished",hint:"💡 두 번째 도망 노예법은 도주 노예를 도운 사람을 ___했습니다."}
+];
+
+const TIME_LIMIT=15;
+const CORRECT_MSGS=[
+  ['🎉','완벽해요!'],['⚡','번개 속도!'],['🌟','대단해요!'],['🦅','독수리 실력!'],
+  ['💥','폭발적!'],['🎯','정확해요!'],['🥳','파티 타임!'],['👑','왕이에요!'],
+  ['🔥','불타는 실력!'],['🚀','로켓처럼!'],['💎','다이아몬드!'],['🌈','빛나요!']
+];
+
+let questions=[],idx=0,score=0,bonusScore=0,streak=0,results=[],answered=false;
+let timerInterval=null,timeLeft=TIME_LIMIT,msgIdx=0;
+let items={hint:0,complete:0};
+let pendingModal=false;
+
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function norm(s){return s.toLowerCase().trim().replace(/\s+/g,' ');}
+function saveLocal(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+function loadLocal(k){try{const v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch(e){return null;}}
+
+function init(){
+  const cPool=shuffle(CHUNKS).slice(0,15).map(c=>({type:'chunk',def:c.def,answer:c.chunk}));
+  const sPool=shuffle(SENTENCES).slice(0,15).map(s=>({type:'sentence',sentence:s.sentence,answer:s.answer,hint:s.hint}));
+  questions=shuffle([...cPool,...sPool]);
+  idx=0;score=0;bonusScore=0;streak=0;results=[];answered=false;
+  items={hint:0,complete:0};msgIdx=0;pendingModal=false;
+  document.getElementById('resultScreen').style.display='none';
+  document.getElementById('quizScreen').style.display='block';
+  updateItemsUI();buildStreakDots();render();
+}
+
+function buildStreakDots(){
+  const row=document.getElementById('streakRow');row.innerHTML='';
+  for(let i=0;i<10;i++){
+    const d=document.createElement('div');d.className='streak-dot';d.id='dot'+i;row.appendChild(d);
+  }
+}
+function updateStreakDots(){
+  for(let i=0;i<10;i++){
+    const d=document.getElementById('dot'+i);
+    if(i<streak){d.classList.add(streak>=10?'fire':'on');d.textContent=i<streak?'🔥':'';}
+    else{d.className='streak-dot';d.textContent='';}
+  }
+  const lbl=document.getElementById('streakLabel');
+  if(streak===0)lbl.textContent='';
+  else if(streak<5)lbl.textContent=`🔥 ${streak}연속 정답!`;
+  else if(streak<10)lbl.textContent=`🚀 ${streak}연속! 거의 다 왔어요!`;
+  else lbl.textContent=`👑 ${streak}연속! 전설이에요!`;
+}
+
+function startTimer(){
+  clearInterval(timerInterval);timeLeft=TIME_LIMIT;updateTimerUI();
+  timerInterval=setInterval(()=>{timeLeft--;updateTimerUI();if(timeLeft<=0){clearInterval(timerInterval);onTimeout();}},1000);
+}
+function updateTimerUI(){
+  const chip=document.getElementById('timerChip');const bar=document.getElementById('timerBar');
+  const pct=(timeLeft/TIME_LIMIT)*100;
+  chip.textContent=`⏱ ${timeLeft}`;
+  chip.className='timer-chip'+(timeLeft<=5?' danger':timeLeft<=8?' warn':'');
+  const col=timeLeft>8?'#43A047':timeLeft>5?'#FF8F00':'#E53935';
+  bar.style.width=pct+'%';bar.style.background=col;
+}
+function onTimeout(){
+  if(answered)return;
+  answered=true;streak=0;updateStreakDots();
+  const inp=document.getElementById('ansInput');inp.disabled=true;inp.classList.add('no');
+  const q=questions[idx];results.push({q,user:'(시간초과)',isOk:false,timeout:true});
+  const fb=document.getElementById('feedback');fb.className='feedback timeout';
+  fb.innerHTML=`⏰ 시간 초과! 정답: <strong>${q.answer}</strong>`;
+  const bn=document.getElementById('btnNext');
+  bn.textContent=idx+1<questions.length?'다음 문제 →':'결과 보기 🏆';bn.classList.add('show');
+}
+
+function render(){
+  answered=false;
+  const q=questions[idx];const total=questions.length;
+  document.getElementById('progBar').style.width=`${(idx/total)*100}%`;
+  document.getElementById('qNum').textContent=`${idx+1}/${total}`;
+  document.getElementById('scoreChip').textContent=`⭐ ${score}`;
+  const card=document.getElementById('qCard');card.style.animation='none';void card.offsetWidth;card.style.animation='slideIn .35s cubic-bezier(.4,0,.2,1)';
+  if(q.type==='chunk'){
+    document.getElementById('qTypeLabel').textContent='✍️ 뜻 → 영어로!';
+    document.getElementById('qBody').textContent=q.def;
+    document.getElementById('qHint').style.display='none';
+  } else {
+    document.getElementById('qTypeLabel').textContent='📝 빈칸을 채워라!';
+    document.getElementById('qBody').innerHTML=q.sentence.replace('___','<span class="q-blank">　　　　</span>');
+    const h=document.getElementById('qHint');h.textContent=q.hint;h.style.display='block';
+  }
+  document.getElementById('hintReveal').style.display='none';
+  const inp=document.getElementById('ansInput');inp.value='';inp.className='ans-input';inp.disabled=false;
+  setTimeout(()=>inp.focus(),80);
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('btnNext').classList.remove('show');
+  updateItemsUI();startTimer();
+}
+
+function check(){
+  if(answered)return;
+  const inp=document.getElementById('ansInput');const user=norm(inp.value);if(!user)return;
+  clearInterval(timerInterval);
+  const q=questions[idx];const correct=norm(q.answer);answered=true;inp.disabled=true;
+  const isOk=user===correct;const timeBonus=isOk?Math.floor(timeLeft/3):0;
+  results.push({q,user:inp.value,isOk,timeout:false});
+  if(isOk){
+    score++;bonusScore+=timeBonus;streak++;inp.classList.add('ok');
+    updateStreakDots();showCorrectFX(timeBonus);showConfetti(streak);burstEmoji();
+    const chip=document.getElementById('scoreChip');chip.textContent=`⭐ ${score}`;
+    chip.classList.remove('pop');void chip.offsetWidth;chip.classList.add('pop');
+    if(streak>0&&streak%10===0)pendingModal=true;
+  } else {
+    streak=0;updateStreakDots();inp.classList.add('no');inp.classList.add('shake');
+    setTimeout(()=>inp.classList.remove('shake'),400);
+    const fb=document.getElementById('feedback');fb.className='feedback no';
+    fb.innerHTML=`❌ 정답: <strong>${q.answer}</strong>`;
+  }
+  const bn=document.getElementById('btnNext');
+  bn.textContent=idx+1<questions.length?'다음 문제 →':'결과 보기 🏆';bn.classList.add('show');
+}
+
+function next(){
+  if(pendingModal){pendingModal=false;document.getElementById('rewardModal').style.display='flex';return;}
+  idx++;if(idx>=questions.length)showResult();else render();
+}
+
+function showCorrectFX(timeBonus){
+  const [em,msg]=CORRECT_MSGS[msgIdx%CORRECT_MSGS.length];msgIdx++;
+  const fb=document.getElementById('feedback');fb.className='feedback ok';
+  fb.textContent=`${em} ${msg}${timeBonus>0?' (+'+timeBonus+' 보너스!)':''}`;
+}
+
+function updateItemsUI(){
+  document.getElementById('hintCount').textContent=items.hint;
+  document.getElementById('completeCount').textContent=items.complete;
+  document.getElementById('btnHint').disabled=items.hint<=0||answered;
+  document.getElementById('btnComplete').disabled=items.complete<=0||answered;
+}
+
+function pickItem(type){items[type]++;updateItemsUI();closeModal();}
+function closeModal(){
+  document.getElementById('rewardModal').style.display='none';
+  idx++;if(idx>=questions.length)showResult();else render();
+}
+function useItem(type){
+  if(answered||items[type]<=0)return;
+  items[type]--;updateItemsUI();
+  const q=questions[idx];
+  if(type==='hint'){
+    const hr=document.getElementById('hintReveal');
+    hr.textContent=`💡 첫 글자: "${q.answer[0].toUpperCase()}"`;hr.style.display='inline-block';
+  } else {
+    clearInterval(timerInterval);document.getElementById('ansInput').value=q.answer;check();
+  }
+}
+
+const canvas=document.getElementById('confettiCanvas');const ctx=canvas.getContext('2d');
+let particles=[],animId=null;
+function showConfetti(s){
+  cancelAnimationFrame(animId);canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+  const count=s>=10?140:s>=5?90:50;
+  const colors=['#FFD600','#29B6F6','#43A047','#FF7043','#AB47BC','#EC407A','#26C6DA','#fff'];
+  particles=Array.from({length:count},()=>({
+    x:Math.random()*canvas.width,y:-10-Math.random()*20,r:Math.random()*6+3,d:Math.random()*count,
+    color:colors[Math.floor(Math.random()*colors.length)],tilt:0,tiltAngle:0,
+    tiltAngleInc:Math.random()*.07+.05,vx:(Math.random()-.5)*3,vy:Math.random()*4+2,opacity:1
+  }));animateConfetti();
+}
+function animateConfetti(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);let alive=false;
+  particles.forEach(p=>{
+    p.tiltAngle+=p.tiltAngleInc;p.x+=p.vx+Math.sin(p.d)*1.5;p.y+=p.vy;
+    p.tilt=Math.sin(p.tiltAngle)*12;p.opacity-=.008;
+    if(p.opacity>0&&p.y<canvas.height)alive=true;
+    ctx.globalAlpha=Math.max(0,p.opacity);ctx.fillStyle=p.color;ctx.beginPath();
+    ctx.ellipse(p.x+p.tilt,p.y,p.r,p.r*.4,p.tiltAngle,0,Math.PI*2);ctx.fill();
+  });
+  ctx.globalAlpha=1;if(alive)animId=requestAnimationFrame(animateConfetti);else ctx.clearRect(0,0,canvas.width,canvas.height);
+}
+function burstEmoji(){
+  const el=document.getElementById('correctBurst');
+  const emojis=['🎉','⭐','💥','🌟','🔥','🎯','🦅','💎'];
+  el.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+  el.classList.remove('show');void el.offsetWidth;el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),750);
+}
+
+function showResult(){
+  clearInterval(timerInterval);
+  document.getElementById('quizScreen').style.display='none';
+  document.getElementById('resultScreen').style.display='block';
+  const total=questions.length;const pct=Math.round(score/total*100);const passed=score>=24;
+  const totalScore=score*10+bonusScore;
+  document.getElementById('resScore').textContent=totalScore+'점';
+  document.getElementById('resDenom').textContent=`정답 ${score}/${total}`;
+  document.getElementById('resBonus').textContent=bonusScore>0?`⚡ 빠른 정답 보너스 +${bonusScore}점`:'';
+  [['st1',.5],['st2',.8],['st3',1]].forEach(([id,t],i)=>{
+    const el=document.getElementById(id);el.classList.remove('on');
+    if(score/total>=t-.001)setTimeout(()=>el.classList.add('on'),400+i*220);
+  });
+  const badge=document.getElementById('passBadge');
+  badge.className='pass-badge '+(passed?'yes':'no');
+  badge.textContent=passed?'🎉 통과! (24개 이상)':`💪 ${24-score}개 더 맞혀요!`;
+  let emoji,msg,sub;
+  if(pct===100){emoji='🏆';msg='만점! 독수리 마스터!';sub='모든 문제를 다 맞혔어요!';}
+  else if(pct>=90){emoji='🌟';msg='거의 완벽해요!';sub='조금만 더 하면 만점이에요!';}
+  else if(passed){emoji='🎉';msg='통과했어요!';sub='잘했어요! 한 번 더 하면 더 잘할 수 있어요!';}
+  else if(pct>=60){emoji='💪';msg='조금만 더!';sub='24개가 목표예요. 다시 도전해요!';}
+  else{emoji='😊';msg='다시 해봐요!';sub='단어를 보고 한 번 더 도전해요!';}
+  document.getElementById('resEmoji').textContent=emoji;
+  document.getElementById('resMsg').textContent=msg;document.getElementById('resSub').textContent=sub;
+  const fill=document.getElementById('resFill');fill.style.width='0%';
+  fill.style.background=passed?'linear-gradient(90deg,#66BB6A,#2E7D32)':'linear-gradient(90deg,#EF9A9A,#C62828)';
+  setTimeout(()=>{fill.style.width=pct+'%';},100);
+  if(passed)showConfetti(10);
+  renderLeaderboard();
+  const rl=document.getElementById('reviewList');rl.innerHTML='';
+  results.forEach((r,i)=>{
+    const div=document.createElement('div');
+    div.className='rev-item '+(r.timeout?'skip':r.isOk?'ok':'no');
+    div.innerHTML=`<div class="rev-icon">${r.timeout?'⏰':r.isOk?'✅':'❌'}</div>
+      <div><div class="rev-q">${i+1}. ${r.q.type==='chunk'?r.q.def:'빈칸 문제 '+(i+1)}</div>
+      <div class="rev-a">정답: <b>${r.q.answer}</b>${!r.isOk&&r.user&&!r.timeout?' · 내 답: '+r.user:''}</div></div>`;
+    rl.appendChild(div);
+  });
+  const saved=loadLocal('eagle_name');if(saved)document.getElementById('nameInput').value=saved;
+}
+
+function saveRecord(){
+  const name=document.getElementById('nameInput').value.trim();if(!name)return;
+  saveLocal('eagle_name',name);
+  const totalScore=score*10+bonusScore;
+  let records=loadLocal('eagle_records')||[];
+  records.push({name,score:totalScore,correct:score,date:new Date().toLocaleDateString('ko-KR')});
+  records.sort((a,b)=>b.score-a.score||b.correct-a.correct);
+  records=records.slice(0,10);saveLocal('eagle_records',records);
+  document.getElementById('saveMsg').style.display='block';renderLeaderboard();
+}
+
+function renderLeaderboard(){
+  const records=loadLocal('eagle_records')||[];
+  const lb=document.getElementById('leaderboard');
+  if(!records.length){lb.innerHTML='<div style="color:var(--muted);font-size:.82rem;padding:8px 0">아직 기록이 없어요!</div>';return;}
+  const ranks=['🥇','🥈','🥉'];
+  lb.innerHTML=records.map((r,i)=>`<div class="lb-row">
+    <div class="lb-rank ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">${i<3?ranks[i]:i+1}</div>
+    <div class="lb-name">${r.name}</div>
+    <div class="lb-score">${r.score}점</div>
+    <div class="lb-time">(${r.correct}/30) · ${r.date}</div>
+  </div>`).join('');
+}
+
+document.getElementById('ansInput').addEventListener('keydown',e=>{
+  if(e.key==='Enter'){if(!answered)check();else next();}
+});
+
+init();
+</script>
+</body>
+</html>

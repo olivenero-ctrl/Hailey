@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hailey's Summer Study 🐶</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Jua&display=swap');
+:root{
+  --bg:#fff5f8;--panel:#ffffff;--panel2:#fdf0f4;--border:#f0c8d8;
+  --pink:#ff6b9d;--pink2:#ff8fb3;--pink3:#ffc2d4;--pink4:#fff0f5;
+  --mint:#5dd9c1;--mint2:#a8f0e4;--yellow:#ffd166;--purple:#c77dff;
+  --blue:#74b9ff;--red:#ff7675;--green:#55efc4;
+  --text:#4a3040;--dim:#b07898;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;padding:12px;
+  background-image:radial-gradient(circle at 10% 20%,rgba(255,107,157,.08) 0%,transparent 40%),
+  radial-gradient(circle at 90% 80%,rgba(93,217,193,.08) 0%,transparent 40%)}
+
+/* ── HEADER ── */
+.hdr{text-align:center;padding:20px 0 16px;border-bottom:2px solid var(--border);margin-bottom:16px;position:relative}
+.hdr-title{font-family:'Jua',sans-serif;font-size:clamp(18px,5vw,28px);color:var(--pink);
+  text-shadow:0 2px 8px rgba(255,107,157,.3);letter-spacing:1px}
+.hdr-sub{font-family:'Jua',sans-serif;font-size:clamp(11px,3vw,15px);color:var(--mint);margin-top:4px}
+.hdr-desc{font-size:11px;color:var(--dim);margin-top:6px}
+.hdr-deco{font-size:28px;margin-bottom:6px}
+
+/* ── STATS ── */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.sbox{background:var(--panel);border:2px solid var(--border);border-radius:14px;padding:10px 5px;text-align:center;
+  box-shadow:0 3px 10px rgba(255,107,157,.1)}
+.sbox.pk{border-color:var(--pink3)}
+.sbox.mt{border-color:var(--mint2)}
+.sbox.yl{border-color:var(--yellow)}
+.sbox.pp{border-color:#e0b0ff}
+.slbl{font-family:'Jua',sans-serif;font-size:clamp(7px,2vw,9px);color:var(--dim);margin-bottom:4px;line-height:1.5}
+.sval{font-size:clamp(16px,4vw,24px);font-weight:900}
+.sbox.pk .sval{color:var(--pink)}.sbox.mt .sval{color:var(--mint)}
+.sbox.yl .sval{color:#e6a000}.sbox.pp .sval{color:var(--purple)}
+.sunit{font-size:9px;color:var(--dim);margin-top:2px}
+
+/* ── PROGRESS ── */
+.prog-sec{background:var(--panel);border:2px solid var(--border);border-radius:14px;padding:12px 14px;margin-bottom:14px;
+  box-shadow:0 3px 10px rgba(255,107,157,.08)}
+.prog-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.prog-lbl{font-family:'Jua',sans-serif;font-size:10px;color:var(--pink)}
+.prog-val{font-family:'Jua',sans-serif;font-size:11px;color:var(--pink);font-weight:700}
+.prog-bg{background:#ffe0ec;border-radius:20px;height:18px;overflow:hidden;border:2px solid var(--pink3)}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--pink),var(--pink2));border-radius:20px;
+  transition:width .8s cubic-bezier(.34,1.56,.64,1);position:relative}
+.prog-fill::after{content:'🐾';position:absolute;right:-2px;top:50%;transform:translateY(-50%);font-size:14px}
+
+/* ── TAMAGOTCHI DOG ── */
+.tama-sec{background:var(--panel);border:2px solid var(--border);border-radius:18px;padding:16px;margin-bottom:14px;
+  box-shadow:0 4px 16px rgba(255,107,157,.12)}
+.tama-t{font-family:'Jua',sans-serif;font-size:13px;color:var(--pink);text-align:center;margin-bottom:12px}
+.tama-main{display:flex;gap:12px;align-items:flex-start}
+.tama-dog-wrap{flex-shrink:0;text-align:center}
+.tama-screen{background:#f0ffe8;border:3px solid #88cc44;border-radius:16px;padding:12px 10px;
+  width:130px;box-shadow:inset 0 2px 8px rgba(0,0,0,.08),0 3px 8px rgba(136,204,68,.2)}
+.dog-display{font-size:44px;line-height:1.1;text-align:center;margin-bottom:4px;
+  filter:drop-shadow(0 2px 4px rgba(0,0,0,.15))}
+.dog-name{font-family:'Jua',sans-serif;font-size:9px;color:#557722;text-align:center}
+.dog-mood{font-size:10px;color:#557722;text-align:center;margin-top:2px;min-height:14px}
+.tama-info{flex:1}
+.stat-rows{display:flex;flex-direction:column;gap:6px}
+.stat-row{display:flex;align-items:center;gap:7px}
+.stat-ico{font-size:14px;width:18px;text-align:center}
+.stat-lbl{font-size:10px;color:var(--dim);width:36px;font-weight:700}
+.stat-bar-bg{flex:1;background:#ffe0ec;border-radius:10px;height:11px;overflow:hidden;border:1px solid var(--pink3)}
+.stat-bar{height:100%;border-radius:10px;transition:width .5s ease}
+.stat-bar.hunger{background:linear-gradient(90deg,#ff6b9d,#ffb3cd)}
+.stat-bar.happy{background:linear-gradient(90deg,#ffd166,#ffea99)}
+.stat-bar.energy{background:linear-gradient(90deg,#5dd9c1,#a8f0e4)}
+.stat-bar.love{background:linear-gradient(90deg,#c77dff,#e0b0ff)}
+.stat-num{font-size:9px;color:var(--dim);width:24px;text-align:right}
+.tama-log{margin-top:8px;background:var(--pink4);border-radius:10px;padding:6px 10px;font-size:10px;color:var(--dim);min-height:22px;line-height:1.5}
+
+/* ── SHOP ── */
+.shop-sec{background:var(--panel);border:2px solid var(--border);border-radius:14px;padding:14px;margin-bottom:14px;
+  box-shadow:0 3px 10px rgba(255,107,157,.08)}
+.shop-t{font-family:'Jua',sans-serif;font-size:13px;color:var(--pink);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.bone-disp{background:var(--pink4);border:2px solid var(--pink3);border-radius:20px;padding:4px 12px;
+  font-family:'Jua',sans-serif;font-size:11px;color:var(--pink)}
+.shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+.shop-item{background:var(--pink4);border:2px solid var(--pink3);border-radius:12px;padding:10px 8px;
+  text-align:center;cursor:pointer;transition:all .2s;position:relative}
+.shop-item:hover:not(.locked){border-color:var(--pink);transform:translateY(-2px);box-shadow:0 4px 12px rgba(255,107,157,.25)}
+.shop-item.locked{opacity:.4;cursor:not-allowed}
+.shop-ico{font-size:24px;margin-bottom:4px}
+.shop-nm{font-family:'Jua',sans-serif;font-size:9px;color:var(--text);margin-bottom:3px;line-height:1.4}
+.shop-cost{font-family:'Jua',sans-serif;font-size:10px;color:var(--pink)}
+.shop-eff{font-size:9px;color:var(--dim);margin-top:2px}
+
+/* ── SECTION TITLE ── */
+.sec-t{font-family:'Jua',sans-serif;font-size:12px;color:var(--pink);letter-spacing:1px;
+  margin-bottom:10px;padding-bottom:6px;border-bottom:2px dashed var(--border)}
+
+/* ── WEEK ── */
+.wk{margin-bottom:20px}
+.wk-hdr{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.wk-badge{font-family:'Jua',sans-serif;font-size:10px;padding:4px 12px;border-radius:20px;white-space:nowrap}
+.w1{background:#ffe0ec;color:var(--pink);border:2px solid var(--pink3)}
+.w2{background:#e0f5ff;color:#3498db;border:2px solid #b0dcf5}
+.w3{background:#e8f5e9;color:#27ae60;border:2px solid #a8dbb0}
+.w4{background:#f5e6ff;color:var(--purple);border:2px solid #e0b0ff}
+.wk-desc{font-size:11px;color:var(--dim)}
+
+/* ── DAY CARD ── */
+.dc{background:var(--panel);border:2px solid var(--border);border-radius:14px;margin-bottom:8px;overflow:hidden;
+  transition:border-color .2s;box-shadow:0 2px 8px rgba(255,107,157,.06)}
+.dc:hover{border-color:var(--pink3);box-shadow:0 4px 14px rgba(255,107,157,.15)}
+.dc.done{border-color:var(--mint);background:linear-gradient(135deg,#fff,#f0fff9)}
+.dc.holi{opacity:.55}
+.dh{display:flex;align-items:center;gap:8px;padding:10px 12px;cursor:pointer;user-select:none}
+.dh:hover{background:rgba(255,107,157,.04)}
+.ddate{font-family:'Jua',sans-serif;font-size:8px;color:var(--dim);min-width:72px}
+.ddot{width:10px;height:10px;border-radius:50%;border:2px solid var(--pink3);flex-shrink:0;transition:all .2s}
+.dc.done .ddot{background:var(--mint);border-color:var(--mint);box-shadow:0 0 8px rgba(93,217,193,.6)}
+.dtitle{font-family:'Jua',sans-serif;font-size:11px;flex:1;line-height:1.4}
+.dtag{font-size:9px;padding:2px 8px;border-radius:10px;font-weight:700;white-space:nowrap}
+.t-step3{background:#ffe0ec;color:var(--pink)}
+.t-step1{background:#e0f5ff;color:#2980b9}
+.t-new{background:#e8f5e9;color:#27ae60}
+.t-rev{background:#f5e6ff;color:var(--purple)}
+.t-hol{background:#f5f5f5;color:#aaa}
+.dbone{font-family:'Jua',sans-serif;font-size:9px;color:var(--pink);white-space:nowrap}
+.dexp{color:var(--dim);font-size:11px;transition:transform .2s}
+.dc.open .dexp{transform:rotate(180deg)}
+
+/* ── DAY BODY ── */
+.db{display:none;padding:10px 12px 12px;border-top:2px dashed var(--border);background:var(--pink4)}
+.dc.open .db{display:block}
+
+/* STEP SECTION */
+.step-group{margin-bottom:10px}
+.step-label{display:inline-block;font-family:'Jua',sans-serif;font-size:9px;padding:2px 10px;border-radius:10px;margin-bottom:6px}
+.sl-3{background:#ffe0ec;color:var(--pink)}.sl-4{background:#fff3e0;color:#e67e22}
+.sl-5{background:#e8f5e9;color:#27ae60}.sl-1{background:#e0f5ff;color:#2980b9}
+.sl-2{background:#f5e6ff;color:var(--purple)}
+
+.tl{list-style:none;margin-bottom:0}
+.ti{display:flex;align-items:flex-start;gap:9px;padding:6px 0;border-bottom:1px dashed var(--border);cursor:pointer}
+.ti:last-child{border-bottom:none}
+.tck{width:17px;height:17px;border:2px solid var(--pink3);border-radius:50%;flex-shrink:0;display:flex;
+  align-items:center;justify-content:center;font-size:10px;transition:all .15s;margin-top:1px}
+.ti.done .tck{background:var(--mint);border-color:var(--mint)}
+.ti.done .tck::after{content:'✓';color:#fff;font-weight:900;font-size:10px}
+.ti.done .ttxt{text-decoration:line-through;color:var(--dim)}
+.ttxt{font-size:12px;line-height:1.5;flex:1}
+.thint{font-size:10px;color:var(--dim);margin-top:1px}
+/* special rows */
+.ti.ops .ttxt{color:#3498db}.ti.ops .tck{border-color:#3498db}
+.ti.ops.done .tck{background:#3498db;border-color:#3498db}
+.ti.hw .ttxt{color:var(--purple)}.ti.hw .tck{border-color:var(--purple)}
+.ti.hw.done .tck{background:var(--purple);border-color:var(--purple)}
+.ti.quick .ttxt{color:#e67e22}.ti.quick .tck{border-color:#e67e22}
+.ti.quick.done .tck{background:#e67e22;border-color:#e67e22}
+.ti.philz .ttxt{color:#27ae60}.ti.philz .tck{border-color:#27ae60}
+.ti.philz.done .tck{background:#27ae60;border-color:#27ae60}
+
+.memo-l{font-family:'Jua',sans-serif;font-size:9px;color:var(--dim);margin-bottom:4px}
+.memo-i{width:100%;background:#fff;border:2px solid var(--border);border-radius:8px;padding:7px 9px;
+  color:var(--text);font-size:11px;font-family:'Noto Sans KR',sans-serif;resize:vertical;min-height:44px;transition:border-color .15s}
+.memo-i:focus{outline:none;border-color:var(--pink)}
+.cbtn{margin-top:10px;width:100%;padding:10px;background:white;border:2px solid var(--pink);color:var(--pink);
+  border-radius:20px;font-family:'Jua',sans-serif;font-size:10px;cursor:pointer;letter-spacing:1px;transition:all .2s}
+.cbtn:hover{background:var(--pink4)}
+.cbtn.act{background:var(--mint);color:#fff;border-color:var(--mint)}
+
+/* ── ACHIEVEMENTS ── */
+.ach-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-bottom:20px}
+.ach{background:var(--panel);border:2px solid var(--border);border-radius:12px;padding:9px;text-align:center;
+  opacity:.3;transition:all .3s}
+.ach.ul{opacity:1;border-color:var(--yellow);box-shadow:0 0 12px rgba(255,209,102,.35)}
+.ach-ico{font-size:20px;margin-bottom:4px}
+.ach-nm{font-family:'Jua',sans-serif;font-size:9px;color:#e6a000;line-height:1.5}
+.ach-ds{font-size:9px;color:var(--dim);margin-top:2px}
+
+/* ── LEGEND ── */
+.legend{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;padding:10px 12px;
+  background:var(--panel);border:2px solid var(--border);border-radius:12px;font-size:10px}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(90px);
+  background:white;border:2px solid var(--pink);color:var(--pink);padding:10px 20px;
+  border-radius:20px;font-family:'Jua',sans-serif;font-size:10px;z-index:2000;
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 4px 20px rgba(255,107,157,.3);
+  text-align:center;line-height:1.9;max-width:88vw}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ── MODAL ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(255,182,210,.35);backdrop-filter:blur(4px);
+  z-index:3000;align-items:center;justify-content:center}
+.overlay.show{display:flex}
+.modal{background:white;border:3px solid var(--pink);border-radius:20px;padding:24px;max-width:320px;
+  width:90%;text-align:center;box-shadow:0 8px 30px rgba(255,107,157,.25)}
+.modal-ico{font-size:44px;margin-bottom:8px}
+.modal-t{font-family:'Jua',sans-serif;font-size:14px;color:var(--pink);margin-bottom:10px}
+.modal-desc{font-size:12px;color:var(--text);margin-bottom:16px;line-height:1.7}
+.modal-close{background:var(--pink);color:#fff;border:none;padding:10px 28px;border-radius:20px;
+  font-family:'Jua',sans-serif;font-size:10px;cursor:pointer;letter-spacing:1px}
+.modal-close:hover{opacity:.85}
+.modal-dog{font-size:56px;animation:bounce .6s ease infinite alternate}
+@keyframes bounce{to{transform:translateY(-8px)}}
+.modal-reaction{font-family:'Jua',sans-serif;font-size:16px;color:var(--pink);margin:8px 0}
+
+/* ── RESET ── */
+.rst{text-align:center;margin-top:14px;padding-top:14px;border-top:2px dashed var(--border)}
+.rbtn{background:white;border:2px solid #ffb3b3;color:#e17676;padding:7px 18px;border-radius:20px;
+  font-family:'Jua',sans-serif;font-size:9px;cursor:pointer;transition:all .2s}
+.rbtn:hover{background:#fff5f5}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--pink3);border-radius:10px}
+@media(max-width:480px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .tama-main{flex-direction:column;align-items:center}
+  .ddate{min-width:60px}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-deco">🌸✏️🐶</div>
+  <div class="hdr-title">Hailey's Math Quest</div>
+  <div class="hdr-sub">🐾 강아지와 함께하는 여름방학 수학 🐾</div>
+  <div class="hdr-desc">7월 28일 ~ 8월 18일 · 점프왕 실력 6-1 + 6-2</div>
+</div>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="sbox pk"><div class="slbl">완료한<br>날 🌸</div><div class="sval" id="sDays">0</div><div class="sunit">/ 21일</div></div>
+  <div class="sbox mt"><div class="slbl">뼈다귀<br>🦴</div><div class="sval" id="sBones">0</div><div class="sunit">개</div></div>
+  <div class="sbox yl"><div class="slbl">체크한<br>항목 ✅</div><div class="sval" id="sTasks">0</div><div class="sunit">개</div></div>
+  <div class="sbox pp"><div class="slbl">연속<br>🔥</div><div class="sval" id="sStreak">0</div><div class="sunit">일</div></div>
+</div>
+
+<!-- PROGRESS -->
+<div class="prog-sec">
+  <div class="prog-hdr"><span class="prog-lbl">🌸 공부 진도</span><span class="prog-val" id="progLbl">0%</span></div>
+  <div class="prog-bg"><div class="prog-fill" id="progBar" style="width:0%"></div></div>
+</div>
+
+<!-- TAMAGOTCHI -->
+<div class="tama-sec">
+  <div class="tama-t">🐶 내 강아지 키우기</div>
+  <div class="tama-main">
+    <div class="tama-dog-wrap">
+      <div class="tama-screen">
+        <div class="dog-display" id="dogDisplay">🐶</div>
+        <div class="dog-name" id="dogName">쿠키</div>
+        <div class="dog-mood" id="dogMood">반가워! 같이 공부해! 📚</div>
+      </div>
+    </div>
+    <div class="tama-info">
+      <div class="stat-rows">
+        <div class="stat-row">
+          <span class="stat-ico">🍖</span>
+          <span class="stat-lbl">배고픔</span>
+          <div class="stat-bar-bg"><div class="stat-bar hunger" id="barHunger" style="width:70%"></div></div>
+          <span class="stat-num" id="numHunger">70</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-ico">😊</span>
+          <span class="stat-lbl">행복</span>
+          <div class="stat-bar-bg"><div class="stat-bar happy" id="barHappy" style="width:60%"></div></div>
+          <span class="stat-num" id="numHappy">60</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-ico">⚡</span>
+          <span class="stat-lbl">에너지</span>
+          <div class="stat-bar-bg"><div class="stat-bar energy" id="barEnergy" style="width:80%"></div></div>
+          <span class="stat-num" id="numEnergy">80</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-ico">💕</span>
+          <span class="stat-lbl">사랑</span>
+          <div class="stat-bar-bg"><div class="stat-bar love" id="barLove" style="width:50%"></div></div>
+          <span class="stat-num" id="numLove">50</span>
+        </div>
+      </div>
+      <div class="tama-log" id="tamaLog">공부 열심히 하면 쿠키가 행복해해요! 🐾</div>
+    </div>
+  </div>
+</div>
+
+<!-- SHOP -->
+<div class="shop-sec">
+  <div class="shop-t">
+    🏪 강아지 아이템 샵
+    <span style="flex:1"></span>
+    <span class="bone-disp">🦴 <span id="shopBones">0</span></span>
+  </div>
+  <div class="shop-grid" id="shopGrid"></div>
+</div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <span style="color:#3498db">🔢 연산 (매일)</span>
+  <span style="color:#e67e22">⚡ 황소 퀵테 (월·수)</span>
+  <span style="color:#27ae60">📝 필즈 숙제 (금)</span>
+  <span style="color:var(--purple)">📚 황소 숙제 (토·일)</span>
+  <span style="color:var(--pink)">✏️ Step 3·4·5</span>
+  <span style="color:#2980b9">📖 Step 1 (개념)</span>
+</div>
+
+<!-- ACHIEVEMENTS -->
+<div class="sec-t">🏅 쿠키와 함께한 순간들</div>
+<div class="ach-grid" id="achGrid"></div>
+
+<!-- SCHEDULE -->
+<div id="schedule"></div>
+
+<div class="rst"><button class="rbtn" onclick="confirmReset()">⚠ 처음부터 다시 시작</button></div>
+<div class="toast" id="toast"></div>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal">
+    <div class="modal-ico" id="mIco"></div>
+    <div class="modal-t" id="mTitle"></div>
+    <div id="mBody"></div>
+    <button class="modal-close" onclick="closeModal()">닫기 💕</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════
+// PLAN DATA — 점프왕 실력 6-1 + 6-2
+// ══════════════════════════════
+// Step 적용 원칙:
+// 연산 단원(분수나눗셈·소수나눗셈·비·비율·비례): Step 3→4→5만
+// 새 개념 단원(도형·그래프·입체·원): Step 1 전부 + Step 2 유형+예제1~2개 + Step 3→4→5 전부
+//
+// 6-1 단원: 1.분수의나눗셈 2.각기둥과각뿔 3.소수의나눗셈 4.비와비율 5.여러가지그래프 6.직육면체부피겉넓이
+// 6-2 단원: 1.분수의나눗셈(분÷분) 2.소수의나눗셈 3.공간과입체 4.비례식과비례배분 5.원의넓이 6.원기둥원뿔구
+
+const PLAN = [
+ {week:1,label:"WEEK 1 🌸",cls:"w1",desc:"6-1 단원 1~3 (분수나눗셈·각기둥각뿔·소수나눗셈)",days:[
+
+  // 7/28 월 — 6-1 ① 분수의 나눗셈 Step3
+  {id:"h01",date:"7/28 월",title:"점프왕 6-1 ① 분수의 나눗셈 — Step 3",tag:"t-step3",tl:"Step 3",bone:3,
+   tasks:[
+    {id:"h001",t:"🔢 연산 (오늘 분량)",cls:"ops"},
+    {id:"hq01",t:"⚡ 황소 퀵테스트 준비 — 핵심 개념 3가지 점검",h:"퀵테 자주 나오는 유형 빠르게 확인!"},
+    {id:"h002",t:"✏️ Step 3 기본 유형 다지기 — 분수 ÷ 자연수 전체 풀기",h:"(자연수)÷(자연수)도 분수로 나타낼 수 있어요!"},
+    {id:"h003",t:"✏️ Step 4 응용 실력 기르기 풀기",h:"좀 더 높은 수준 — 도전!"},
+    {id:"h004",t:"틀린 문제 오답 메모"},
+   ]},
+
+  // 7/29 화 — 6-1 ① 분수의 나눗셈 Step5 + 단원평가
+  {id:"h02",date:"7/29 화",title:"점프왕 6-1 ① 분수의 나눗셈 — Step 5 + 단원평가",tag:"t-step3",tl:"Step 5",bone:4,
+   tasks:[
+    {id:"h005",t:"🔢 연산 (오늘 분량)",cls:"ops"},
+    {id:"h006",t:"✏️ Step 5 응용 실력 높이기 풀기",h:"논리적 사고력 문제 — 천천히!"},
+    {id:"h007",t:"✏️ 단원평가 풀기 (서술형 포함)"},
+    {id:"h008",t:"틀린 문제 오답 메모"},
+   ]},
+
+  // 7/30 수 — 6-1 ② 각기둥과 각뿔 Step1 + Step2 (새 개념!)
+  {id:"h03",date:"7/30 수",title:"점프왕 6-1 ② 각기둥과 각뿔 — Step 1+2 🆕개념",tag:"t-new",tl:"개념!",bone:5,
+   tasks:[
+    {id:"h009",t:"🔢 연산 (오늘 분량)",cls:"ops"},
+    {id:"hq03",t:"⚡ 황소 퀵테스트 준비 — 핵심 개념 3가지 점검",h:"퀵테 자주 나오는 유형 빠르게 확인!"},
+    {id:"h010",t:"📖 Step 1 개념 확인하기 전부 읽고 풀기",h:"각기둥의 구성 요소 (밑면·옆면·꼭짓점·모서리·높이)"},
+    {id:"h011",t:"📖 Step 2 기본 유형 익히기 — 좋아하는 유형 1~2개 선택",h:"각뿔의 종류와 이름 유형에서 고르기!"},
+    {id:"h012",t:"각기둥 vs 각뿔 차이 엄마한테 설명하기 (5분)"},
+   ]},
+
+  // 7/31 목 — 6-1 ② 각기둥과 각뿔 Step3→4→5
+  {id:"h04",date:"7/31 목",title:"점프왕 6-1 ② 각기둥과 각뿔 — Step 3→4→5",tag:"t-step3",tl:"Step 3·4·5",bone:5,
+   tasks:[
+    {id:"h013",t:"🔢 연산 (오늘 분량)",cls:"ops"},
+    {id:"h014",t:"✏️ Step 3 기본 유형 다지기 전체 풀기",h:"전개도 펼치면 어떤 모양? 직접 그려보기!"},
+    {id:"h015",t:"✏️ Step 4 응용 실력 기르기 풀기"},
+    {id:"h016",t:"✏️ Step 5 응용 실력 높이기 풀기"},
+    {id:"h017",t:"✏️ 단원평가 풀기"},
+   ]},
+
+  // 8/1 금 — 6-1 ③ 소수의 나눗셈 Step3
+  {id:"h05",date:"8/1 금",title:"점프왕 6-1 ③ 소수의 나눗셈 — Step 3→4",tag:"t-step3",tl:"Step 3·4",bone:4,
+   tasks:[
+    {id:"h018",t:"🔢 연산 (오늘 분량)",cls:"ops"},
+    {id:"hf05",t:"📝 필즈 숙제 완료",h:"금요일 필즈 숙제 체크!"},
+    {id:"h019",t:"✏️ Step 3 기본 유형 다지기 전체 풀기",h:"(소수)÷(자연수), (자연수)÷(소수) — 소수점 위치 주의!"},
+    {id:"h020",t:"✏️ Step 4 응용 실력 기르기 풀기"},
+    {id:"h021",t:"틀린 문제 오답 메모"},
+   ]},
+
+  // 8/2 토 — 6-1 ③ 소수의 나눗셈 Step5 + 단원평가
+  {id:"h06",date:"8/2 토",title:"점프왕 6-1 ③ 소수의 나눗셈 — Step 5 + 단원평가",tag:"t-step3",tl:"Step 5",bone:4,
+   tasks:[
+    {id:"h022",t:"🔢 연산 (오늘 분량)",cls:"ops"},
+    {id:"h023",t:"📚 황소 숙제 확인 · 완료",cls:"hw"},
+    {id:"h024",t:"✏️ Step 5 응용 실력 높이기 풀기"},
+    {id:"h025",t:"✏️ 단원평가 풀기 (서술형 포함)"},
+    {id:"h026",t:"틀린 문제 오답 메모"},
+   ]},
+
+  // 8/3 일 — 복습 + 쿠키와 쉬는 날
+  {id:"h07",date:"8/3 일",title:"🌸 복습 + 쿠키와 휴식 DAY",tag:"t-rev",tl:"복습!",bone:3,
+   tasks:[
+    {id:"h027",t:"🔢 연산 (오늘 분량)",cls:"ops"},
+    {id:"h028",t:"📚 황소 숙제 확인 · 완료",cls:"hw"},
+    {id:"h029",t:"1~3단원 중 가장 어려웠던 문제 3개 다시 풀기"},
+    {id:"h030",t:"오늘 배운 것 그림으로 정리 (각기둥·각뿔 스케치)"},
+   ]},
+ ]},
+
+ {week:2,label:"WEEK 2 🌷",cls:"w2",desc:"6-1 단원 4~6 (비·그래프·직육면체) 완주!",days:[
+
+  // 8/4 월 — 6-1 ④ 비와 비율 Step3→4
+  {id:"h08",date:"8/4 월",title:"점프왕 6-1 ④ 비와 비율 — Step 3→4",tag:"t-step3",tl:"Step 3·4",bone:4,
+   tasks:[
+    {id:"h031",t:"🔢 연산 (오늘 분량)",cls:"ops"},
+    {id:"hq08",t:"⚡ 황소 퀵테스트 준비 — 핵심 개념 3가지 점검",h:"퀵테 자주 나오는 유형 빠르게 확인!"},
+    {id:"h032",t:"✏️ Step 3 기본 유형 다지기 전체 풀기",h:"비와 비율, 백분율, 할푼리 — 헷갈리지 않게!"},
+    {id:"h033",t:"✏️ Step 4 응용 실력 기르기 풀기"},
+    {id:"h034",t:"틀린 문제 오답 메모"},
+   ]},
+
+  // 8/5 화 — 6-1 ④ 비와 비율 Step5 + 단원평가
+  {id:"h09",date:"8/5 화",title:"점프왕 6-1 ④ 비와 비율 — Step 5 + 단원평가",tag:"t-step3",tl:"Step 5",bone:4,
+   tasks:[
+    {id:"h035",t:"🔢 연산 (오늘 분량)",cls:"ops"},
+    {id:"h036",t:"✏️ Step 5 응용 실력 높이기 풀기"},
+    {id:"h037",t:"✏️ 단원평가 풀기"},
+    {id:"h038",t:"틀린 문제 오답 메모"},
+   ]},
+
+  // 8/6 수 — 6-1 ⑤ 여러 가지 그래프 Step1+2 (새 개념!)
+  {id:"h10",date:"8/6 수",title:"점프왕 6-1 ⑤ 여러 가지 그래프 — Step 1+2 🆕",tag:"t-new",tl:"개념!",bone:5,
+   tasks:[
+    {id:"h039",t:"🔢 연산 (오늘 분량)",cls:"ops"},
+    {id:"hq10",t:"⚡ 황소 퀵테스트 준비 — 핵심 개념 3가지 점검",h:"퀵테 자주 나오는 유형 빠르게 확인!"},
+    {id:"h040",t:"📖 Step 1 개념 확인하기 전부 풀기",h:"띠그래프·원그래프 — 전체에 대한 비율로 나타내는 그래프!"},
+    {id:"h041",t:"📖 Step 2 기본 유형 익히기 — 좋아하는 유형 1~2개 선택"},
+    {id:"h042",t:"띠그래프와 원그래프 차이 엄마한테 설명하기 (5분)"},
+   ]},
+
+  // 8/7 목 — 6-1 ⑤ 여러 가지 그래프 Step3→4→5
+  {id:"h11",date:"8/7 목",title:"점프왕 6-1 ⑤ 여러 가지 그래프 — Step 3→4→5",tag:"t-step3",tl:"Step 3·4·5",bone:5,
+   tasks:[
+    {id:"h043",t:"🔢 연산 (오늘 분량)",cls:"ops"},
+    {id:"h044",t:"✏️ Step 3 기본 유형 다지기 전체 풀기"},
+    {id:"h045",t:"✏️ Step 4 응용 실력 기르기 풀기"},
+    {id:"h046",t:"✏️ Step 5 응용 실력 높이기 풀기"},
+    {id:"h047",t:"✏️ 단원평가 풀기"},
+   ]},
+
+  // 8/8 금 — 6-1 ⑥ 직육면체 부피와 겉넓이 Step1+2 (새 개념!)
+  {id:"h12",date:"8/8 금",title:"점프왕 6-1 ⑥ 직육면체 부피·겉넓이 — Step 1+2 🆕",tag:"t-new",tl:"개념!",bone:5,
+   tasks:[
+    {id:"h048",t:"🔢 연산 (오늘 분량)",cls:"ops"},
+    {id:"hf12",t:"📝 필즈 숙제 완료",h:"금요일 필즈 숙제 체크!"},
+    {id:"h049",t:"📖 Step 1 개념 확인하기 전부 풀기",h:"부피 단위 1cm³와 1m³ 관계 — 100×100×100!"},
+    {id:"h050",t:"📖 Step 2 기본 유형 익히기 — 좋아하는 유형 1~2개 선택"},
+    {id:"h051",t:"직육면체 겉넓이와 부피 공식 직접 유도해보기"},
+   ]},
+
+  // 8/9 토 — 6-1 ⑥ 직육면체 Step3→4→5 🎉6-1 완주!
+  {id:"h13",date:"8/9 토",title:"점프왕 6-1 ⑥ 직육면체 Step3→4→5 🎉 6-1 CLEAR!",tag:"t-step3",tl:"완주!",bone:8,
+   tasks:[
+    {id:"h052",t:"🔢 연산 (오늘 분량)",cls:"ops"},
+    {id:"h053",t:"📚 황소 숙제 확인 · 완료",cls:"hw"},
+    {id:"h054",t:"✏️ Step 3 기본 유형 다지기 전체 풀기"},
+    {id:"h055",t:"✏️ Step 4+5 응용 실력 풀기"},
+    {id:"h056",t:"✏️ 단원평가 풀기"},
+    {id:"h057",t:"⭐ 6-1 완주 기념 — 6개 단원 한 줄 요약 적기!"},
+   ]},
+
+  // 8/10 일 — 6-1 전체 복습
+  {id:"h14",date:"8/10 일",title:"🌸 6-1 전체 복습 + 쿠키 놀이 DAY",tag:"t-rev",tl:"복습!",bone:4,
+   tasks:[
+    {id:"h058",t:"🔢 연산 (오늘 분량)",cls:"ops"},
+    {id:"h059",t:"📚 황소 숙제 확인 · 완료",cls:"hw"},
+    {id:"h060",t:"6-1 전 단원 중 가장 어려웠던 문제 유형 다시 풀기"},
+    {id:"h061",t:"6-1 전체 내용 마인드맵 그리기 (귀엽게!)"},
+   ]},
+ ]},
+
+ {week:3,label:"WEEK 3 🍀",cls:"w3",desc:"6-2 단원 1~4 (분수·소수나눗셈·공간과입체·비례)",days:[
+
+  // 8/11 월 — 6-2 ① 분수의 나눗셈 Step3→4
+  {id:"h15",date:"8/11 월",title:"점프왕 6-2 ① 분수의 나눗셈 — Step 3→4",tag:"t-step3",tl:"Step 3·4",bone:4,
+   tasks:[
+    {id:"h062",t:"🔢 연산 (오늘 분량)",cls:"ops"},
+    {id:"hq15",t:"⚡ 황소 퀵테스트 준비 — 핵심 개념 3가지 점검",h:"퀵테 자주 나오는 유형 빠르게 확인!"},
+    {id:"h063",t:"✏️ Step 3 기본 유형 다지기 전체 풀기",h:"(분수)÷(분수) — 6-1보다 난이도 업! 역수 곱하기"},
+    {id:"h064",t:"✏️ Step 4 응용 실력 기르기 풀기"},
+    {id:"h065",t:"틀린 문제 오답 메모"},
+   ]},
+
+  // 8/12 화 — 6-2 ① 분수의 나눗셈 Step5 + 단원평가
+  {id:"h16",date:"8/12 화",title:"점프왕 6-2 ① 분수의 나눗셈 — Step 5 + 단원평가",tag:"t-step3",tl:"Step 5",bone:4,
+   tasks:[
+    {id:"h066",t:"🔢 연산 (오늘 분량)",cls:"ops"},
+    {id:"h067",t:"✏️ Step 5 응용 실력 높이기 풀기"},
+    {id:"h068",t:"✏️ 단원평가 풀기 (서술형 포함)"},
+    {id:"h069",t:"틀린 문제 오답 메모"},
+   ]},
+
+  // 8/13 수 — 6-2 ② 소수의 나눗셈 Step3→4→5
+  {id:"h17",date:"8/13 수",title:"점프왕 6-2 ② 소수의 나눗셈 — Step 3→4→5",tag:"t-step3",tl:"Step 3·4·5",bone:5,
+   tasks:[
+    {id:"h070",t:"🔢 연산 (오늘 분량)",cls:"ops"},
+    {id:"hq17",t:"⚡ 황소 퀵테스트 준비 — 핵심 개념 3가지 점검",h:"퀵테 자주 나오는 유형 빠르게 확인!"},
+    {id:"h071",t:"✏️ Step 3 기본 유형 다지기 전체 풀기",h:"(소수)÷(소수) — 나누는 수를 자연수로 만들어서!"},
+    {id:"h072",t:"✏️ Step 4+5 응용 실력 풀기"},
+    {id:"h073",t:"✏️ 단원평가 풀기"},
+   ]},
+
+  // 8/14 목 — 6-2 ③ 공간과 입체 Step1+2 (새 개념!)
+  {id:"h18",date:"8/14 목",title:"점프왕 6-2 ③ 공간과 입체 — Step 1+2 🆕",tag:"t-new",tl:"개념!",bone:5,
+   tasks:[
+    {id:"h074",t:"🔢 연산 (오늘 분량)",cls:"ops"},
+    {id:"h075",t:"📖 Step 1 개념 확인하기 전부 풀기",h:"쌓기나무로 쌓은 모양 — 위·앞·옆에서 본 모양!"},
+    {id:"h076",t:"📖 Step 2 기본 유형 익히기 — 좋아하는 유형 1~2개 선택"},
+    {id:"h077",t:"쌓기나무 블록 실제로 쌓아보며 이해하기 (가능하면)"},
+   ]},
+
+  // 8/15 금 — 광복절
+  {id:"h19",date:"8/15 금",title:"🇰🇷 광복절 — 쿠키와 쉬는 날",tag:"t-hol",tl:"공휴일",bone:2,holiday:true,
+   tasks:[
+    {id:"h078",t:"(선택) 어려웠던 문제 1개만 다시 풀기"},
+    {id:"h079",t:"(선택) 쿠키 아이템 샵에서 선물 사주기 🎁"},
+    {id:"h080",t:"⭐ 잘 쉬는 것도 공부예요!"},
+   ]},
+
+  // 8/16 토 — 6-2 ③ 공간과 입체 Step3→4→5
+  {id:"h20",date:"8/16 토",title:"점프왕 6-2 ③ 공간과 입체 — Step 3→4→5",tag:"t-step3",tl:"Step 3·4·5",bone:5,
+   tasks:[
+    {id:"h081",t:"🔢 연산 (오늘 분량)",cls:"ops"},
+    {id:"h082",t:"📚 황소 숙제 확인 · 완료",cls:"hw"},
+    {id:"h083",t:"✏️ Step 3 기본 유형 다지기 전체 풀기"},
+    {id:"h084",t:"✏️ Step 4+5 응용 실력 풀기"},
+    {id:"h085",t:"✏️ 단원평가 풀기"},
+   ]},
+
+  // 8/17 일 — 6-2 ④ 비례식과 비례배분 Step3→4→5
+  {id:"h21",date:"8/17 일",title:"점프왕 6-2 ④ 비례식과 비례배분 — Step 3→4→5",tag:"t-step3",tl:"Step 3·4·5",bone:5,
+   tasks:[
+    {id:"h086",t:"🔢 연산 (오늘 분량)",cls:"ops"},
+    {id:"h087",t:"📚 황소 숙제 확인 · 완료",cls:"hw"},
+    {id:"h088",t:"✏️ Step 3 기본 유형 다지기 전체 풀기",h:"비례식의 성질 (내항의 곱 = 외항의 곱)"},
+    {id:"h089",t:"✏️ Step 4+5 응용 실력 + 단원평가 풀기"},
+    {id:"h090",t:"⭐⭐ 엄마한테 '비례배분'이란 무엇인지 설명하기 (5분)"},
+   ]},
+ ]},
+
+ {week:4,label:"개학일 🌈",cls:"w4",desc:"🎓 방학 플래너 완전 완주! 쿠키 졸업식!",days:[
+  {id:"h22",date:"8/18 월",title:"🏫 개학일 — 쿠키와 함께 방학 완주! 👑",tag:"t-rev",tl:"완주!",bone:10,
+   tasks:[
+    {id:"hq22",t:"⚡ 황소 퀵테스트 준비 — 핵심 개념 3가지 점검",h:"퀵테 자주 나오는 유형 빠르게 확인!"},
+    {id:"h091",t:"방학 동안 공부한 것 최종 정리 체크"},
+    {id:"h092",t:"선생님께 보여줄 '방학 자습 내용' 예쁘게 정리"},
+    {id:"h093",t:"⭐⭐ 쿠키한테 '방학 잘 보냈어!' 인사하기 🐶"},
+   ]},
+ ]},
+];
+
+// ══════════════════════════════
+// SHOP ITEMS
+// ══════════════════════════════
+const SHOP = [
+  {id:"food1",ico:"🍖",nm:"맛있는 뼈다귀",desc:"쿠키 배고픔 +25",cost:2,
+   fn:()=>petStat("hunger",25,"냠냠! 맛있어요! 🍖","🐶")},
+  {id:"food2",ico:"🍰",nm:"딸기 케이크",desc:"배고픔+15 행복+15",cost:3,
+   fn:()=>{petStat("hunger",15,"");petStat("happy",15,"케이크다! 최고야! 🎂","🥳");}},
+  {id:"play1",ico:"🎾",nm:"공 던지기",desc:"행복 +30",cost:3,
+   fn:()=>petStat("happy",30,"공이다! 가져올게요! 🎾","🐶")},
+  {id:"play2",ico:"🪀",nm:"장난감 놀이",desc:"행복+20 에너지-10",cost:2,
+   fn:()=>{petStat("happy",20,"");petStat("energy",-10,"신나게 놀았어요! 🪀","😄");}},
+  {id:"love1",ico:"🤗",nm:"꼭 안아주기",desc:"사랑 +35",cost:3,
+   fn:()=>petStat("love",35,"따뜻해요... 💕","🥰")},
+  {id:"love2",ico:"💌",nm:"편지 쓰기",desc:"사랑+20 행복+10",cost:2,
+   fn:()=>{petStat("love",20,"");petStat("happy",10,"편지 받았어요! 💌","😊");}},
+  {id:"sleep1",ico:"🛏️",nm:"재워주기",desc:"에너지 +40",cost:3,
+   fn:()=>petStat("energy",40,"쿨쿨... 잘 잘게요 🌙","😴")},
+  {id:"bath1",ico:"🛁",nm:"목욕시키기",desc:"행복+15 사랑+10",cost:2,
+   fn:()=>{petStat("happy",15,"");petStat("love",10,"깨끗해졌어요! 반짝반짝 ✨","🐶");}},
+  {id:"snack",ico:"🦴",nm:"특별 간식",desc:"배고픔+30 행복+10",cost:4,
+   fn:()=>{petStat("hunger",30,"");petStat("happy",10,"세상에서 제일 맛있어! 🦴","😋");}},
+  {id:"walk",ico:"🌳",nm:"산책하기",desc:"행복+25 에너지-15",cost:3,
+   fn:()=>{petStat("happy",25,"");petStat("energy",-15,"산책 최고야! 🌳","🐾");}},
+  {id:"dress",ico:"👗",nm:"옷 입히기",desc:"사랑+25 행복+10",cost:4,
+   fn:()=>{petStat("love",25,"");petStat("happy",10,"예쁘죠? 나 이쁘죠? 👗","💃");}},
+  {id:"photo",ico:"📸",nm:"사진 찍기",desc:"사랑+15 행복+20",cost:3,
+   fn:()=>{petStat("love",15,"");petStat("happy",20,"찍어줘요! 포즈 취할게요! 📸","🌟");}},
+];
+
+// ══════════════════════════════
+// ACHIEVEMENTS
+// ══════════════════════════════
+const ACHS = [
+  {id:"first",ico:"🌸",nm:"첫 공부!",ds:"첫 날 완료",chk:s=>s.completedDays>=1},
+  {id:"streak3",ico:"🔥",nm:"3일 연속!",ds:"3일 연속 완료",chk:s=>s.maxStreak>=3},
+  {id:"fed",ico:"🍖",nm:"밥 챙겨줘!",ds:"먹이 3번 주기",chk:s=>(s.shopUsed||0)>=3},
+  {id:"g1clear",ico:"⭐",nm:"6-1 완주!",ds:"6-1 6단원 완주",chk:s=>["h01","h02","h03","h04","h05","h06","h07","h08","h09","h10","h11","h12","h13","h14"].every(x=>s.dayDone[x])},
+  {id:"half",ico:"🌈",nm:"반환점!",ds:"10일 이상 완료",chk:s=>s.completedDays>=10},
+  {id:"streak7",ico:"💫",nm:"일주일 연속!",ds:"7일 연속 완료",chk:s=>s.maxStreak>=7},
+  {id:"lover",ico:"💕",nm:"쿠키 사랑꾼",ds:"사랑 수치 90 달성",chk:s=>(s.petStats?.love||50)>=90},
+  {id:"all",ico:"👑",nm:"방학 여왕!",ds:"전체 완주!",chk:s=>s.completedDays>=21},
+];
+
+// ══════════════════════════════
+// STATE
+// ══════════════════════════════
+const KEY="hailey_summer_2026";
+function load(){
+  try{const r=localStorage.getItem(KEY);if(r)return JSON.parse(r);}catch(e){}
+  return{dayDone:{},taskDone:{},memos:{},bones:0,shopUsed:0,maxStreak:0,
+    petStats:{hunger:70,happy:60,energy:80,love:50}};
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(ST));}catch(e){}}
+let ST=load();
+
+// ══════ PET LOGIC ══════
+const DOG_FACES = {
+  great:"🐕", // 행복지수 high
+  good:"🐶",
+  meh:"🐩",
+  sad:"😿",
+  sleep:"💤",
+  eat:"😋",
+  play:"🐾",
+  love:"🥰",
+};
+
+function getDogMood(){
+  const s=ST.petStats;
+  const avg=(s.hunger+s.happy+s.energy+s.love)/4;
+  if(s.energy<20) return {face:DOG_FACES.sleep, mood:"피곤해요... 재워주세요 😴"};
+  if(s.hunger<25) return {face:"😿", mood:"배고파요... 밥 주세요 🍖"};
+  if(avg>=75) return {face:DOG_FACES.great, mood:"너무 행복해요! 최고야! ✨"};
+  if(avg>=55) return {face:DOG_FACES.good, mood:"좋아요! 오늘도 같이 공부해요! 📚"};
+  if(avg>=35) return {face:DOG_FACES.meh, mood:"놀아줘요... 심심해요 🥺"};
+  return {face:"😿", mood:"저 좀 돌봐주세요... 💔"};
+}
+
+function updateDog(){
+  const m=getDogMood();
+  const el=document.getElementById("dogDisplay");
+  const ml=document.getElementById("dogMood");
+  if(el) el.textContent=m.face;
+  if(ml) ml.textContent=m.mood;
+  const s=ST.petStats;
+  const bars={hunger:"barHunger",happy:"barHappy",energy:"barEnergy",love:"barLove"};
+  const nums={hunger:"numHunger",happy:"numHappy",energy:"numEnergy",love:"numLove"};
+  Object.keys(bars).forEach(k=>{
+    const v=Math.max(0,Math.min(100,s[k]||0));
+    const b=document.getElementById(bars[k]);
+    const n=document.getElementById(nums[k]);
+    if(b)b.style.width=v+"%";
+    if(n)n.textContent=v;
+  });
+}
+
+function petStat(key,delta,logMsg,face){
+  ST.petStats=ST.petStats||{hunger:70,happy:60,energy:80,love:50};
+  ST.petStats[key]=Math.max(0,Math.min(100,(ST.petStats[key]||50)+delta));
+  save();updateDog();
+  if(logMsg){
+    const el=document.getElementById("tamaLog");
+    if(el)el.textContent=logMsg;
+    openPetReaction(face||"🐶",logMsg);
+  }
+}
+
+function openPetReaction(face,msg){
+  document.getElementById("mIco").textContent="";
+  document.getElementById("mTitle").textContent="쿠키가 좋아해요!";
+  document.getElementById("mBody").innerHTML=
+    `<div class="modal-dog">${face}</div>
+     <div class="modal-reaction">${msg}</div>
+     <div style="font-size:11px;color:var(--dim);margin-bottom:10px">쿠키 상태가 올라갔어요! 💕</div>`;
+  document.getElementById("overlay").classList.add("show");
+}
+
+function closeModal(){
+  document.getElementById("overlay").classList.remove("show");
+  document.getElementById("mBody").innerHTML="";
+}
+
+// ══════ BUILD SHOP ══════
+function buildShop(){
+  const g=document.getElementById("shopGrid");g.innerHTML="";
+  SHOP.forEach(item=>{
+    const locked=ST.bones<item.cost;
+    const d=document.createElement("div");
+    d.className="shop-item"+(locked?" locked":"");
+    d.innerHTML=`<div class="shop-ico">${item.ico}</div>
+      <div class="shop-nm">${item.nm}</div>
+      <div class="shop-cost">🦴 ${item.cost}</div>
+      <div class="shop-eff">${item.desc}</div>`;
+    if(!locked) d.onclick=()=>{
+      if(ST.bones<item.cost){showToast("뼈다귀가 부족해요! 🦴");return;}
+      ST.bones-=item.cost;
+      ST.shopUsed=(ST.shopUsed||0)+1;
+      save();updateStats();buildShop();
+      item.fn();checkAchs();
+    };
+    g.appendChild(d);
+  });
+}
+
+// ══════ BUILD ACHIEVEMENTS ══════
+function buildAchs(){
+  const g=document.getElementById("achGrid");g.innerHTML="";
+  ACHS.forEach(a=>{
+    const d=document.createElement("div");
+    d.className="ach";d.id="ach-"+a.id;
+    d.innerHTML=`<div class="ach-ico">${a.ico}</div><div class="ach-nm">${a.nm}</div><div class="ach-ds">${a.ds}</div>`;
+    g.appendChild(d);
+  });
+}
+
+// ══════ BUILD SCHEDULE ══════
+function buildSchedule(){
+  const c=document.getElementById("schedule");c.innerHTML="";
+  PLAN.forEach(week=>{
+    const wb=document.createElement("div");wb.className="wk";
+    const wh=document.createElement("div");wh.className="wk-hdr";
+    wh.innerHTML=`<span class="wk-badge ${week.cls}">${week.label}</span><span class="wk-desc">${week.desc}</span>`;
+    wb.appendChild(wh);
+    week.days.forEach(day=>{
+      const dc=document.createElement("div");
+      dc.className="dc"+(ST.dayDone[day.id]?" done":"")+(day.holiday?" holi":"");
+      dc.id="dc-"+day.id;
+      const tasks=day.tasks.map(t=>{
+        const isOps=t.t.startsWith("🔢");
+        const isHw=t.cls==="hw"||t.t.startsWith("📚");
+        const isQuick=t.t.startsWith("⚡");
+        const isPhilz=t.t.startsWith("📝");
+        const extra=isOps?" ops":isHw?" hw":isQuick?" quick":isPhilz?" philz":"";
+        return`<li class="ti${ST.taskDone[t.id]?" done":""}${extra}" data-t="${t.id}" onclick="toggleTask('${day.id}','${t.id}')">
+          <div class="tck"></div>
+          <div><div class="ttxt">${t.t}</div>${t.h?`<div class="thint">💡 ${t.h}</div>`:""}</div>
+        </li>`;
+      }).join("");
+      dc.innerHTML=`
+        <div class="dh" onclick="toggleCard('${day.id}')">
+          <div class="ddate">${day.date}</div>
+          <div class="ddot"></div>
+          <div class="dtitle">${day.title}</div>
+          <span class="dtag ${day.tag}">${day.tl}</span>
+          <span class="dbone">🦴${day.bone}</span>
+          <span class="dexp">▼</span>
+        </div>
+        <div class="db">
+          <ul class="tl">${tasks}</ul>
+          <div class="memo-l">📝 오늘의 메모</div>
+          <textarea class="memo-i" placeholder="오늘 공부 어땠어? 메모해봐 🌸" oninput="saveMemo('${day.id}',this.value)">${ST.memos[day.id]||""}</textarea>
+          <button class="cbtn${ST.dayDone[day.id]?" act":""}" onclick="toggleDay('${day.id}')" id="cb-${day.id}">
+            ${ST.dayDone[day.id]?"✅ 오늘도 완료! 쿠키가 좋아해요 🐶":"🌸 오늘 공부 완료!"}
+          </button>
+        </div>`;
+      wb.appendChild(dc);
+    });
+    c.appendChild(wb);
+  });
+}
+
+// ══════ INTERACTIONS ══════
+function toggleCard(id){const el=document.getElementById("dc-"+id);if(el)el.classList.toggle("open");}
+
+function toggleTask(dayId,taskId){
+  ST.taskDone[taskId]=!ST.taskDone[taskId];save();
+  const el=document.querySelector(`[data-t="${taskId}"]`);
+  if(el)el.classList.toggle("done",ST.taskDone[taskId]);
+  updateStats();
+  // small mood boost on task completion
+  if(ST.taskDone[taskId]){
+    ST.petStats=ST.petStats||{hunger:70,happy:60,energy:80,love:50};
+    ST.petStats.happy=Math.min(100,(ST.petStats.happy||60)+3);
+    save();updateDog();
+  }
+}
+
+function saveMemo(id,v){ST.memos[id]=v;save();}
+
+function toggleDay(dayId){
+  const was=ST.dayDone[dayId];
+  ST.dayDone[dayId]=!was;
+  updateStreaks();save();
+  const dc=document.getElementById("dc-"+dayId);
+  const btn=document.getElementById("cb-"+dayId);
+  if(dc)dc.classList.toggle("done",ST.dayDone[dayId]);
+  if(btn){
+    btn.textContent=ST.dayDone[dayId]?"✅ 오늘도 완료! 쿠키가 좋아해요 🐶":"🌸 오늘 공부 완료!";
+    btn.classList.toggle("act",ST.dayDone[dayId]);
+  }
+  if(ST.dayDone[dayId]&&!was){
+    const day=findDay(dayId);
+    ST.bones=(ST.bones||0)+day.bone;
+    // boost pet
+    ST.petStats=ST.petStats||{hunger:70,happy:60,energy:80,love:50};
+    ST.petStats.happy=Math.min(100,(ST.petStats.happy||60)+10);
+    ST.petStats.love=Math.min(100,(ST.petStats.love||50)+5);
+    save();updateDog();
+    showToast(`오늘도 최고야! 🦴 +${day.bone} 뼈다귀!\n쿠키도 행복해해요 🐶💕`);
+  }
+  updateStats();buildShop();checkAchs();
+}
+
+function updateStreaks(){
+  let all=[];
+  PLAN.forEach(w=>w.days.forEach(d=>{if(!d.holiday)all.push(d.id);}));
+  let cur=0,max=0;
+  for(const id of all){if(ST.dayDone[id]){cur++;max=Math.max(max,cur);}else cur=0;}
+  ST.maxStreak=max;
+}
+
+function findDay(id){for(const w of PLAN)for(const d of w.days)if(d.id===id)return d;return{bone:0};}
+
+function updateStats(){
+  let days=0,tasks=0;
+  PLAN.forEach(w=>w.days.forEach(d=>{
+    if(ST.dayDone[d.id])days++;
+    d.tasks.forEach(t=>{if(ST.taskDone[t.id])tasks++;});
+  }));
+  const bones=ST.bones||0;
+  document.getElementById("sDays").textContent=days;
+  document.getElementById("sBones").textContent=bones;
+  document.getElementById("sTasks").textContent=tasks;
+  document.getElementById("sStreak").textContent=ST.maxStreak||0;
+  document.getElementById("shopBones").textContent=bones;
+  const pct=Math.round(days/21*100);
+  document.getElementById("progBar").style.width=pct+"%";
+  document.getElementById("progLbl").textContent=pct+"%";
+  ST._cd=days;
+}
+
+function checkAchs(){
+  const s={...ST,completedDays:ST._cd||0,maxStreak:ST.maxStreak||0};
+  ACHS.forEach(a=>{
+    const el=document.getElementById("ach-"+a.id);
+    if(el&&a.chk(s)&&!el.classList.contains("ul")){
+      el.classList.add("ul");
+      showToast("🏅 업적 달성!\n"+a.nm);
+    }
+  });
+}
+
+function restoreAchs(){
+  const s={...ST,completedDays:ST._cd||0,maxStreak:ST.maxStreak||0};
+  ACHS.forEach(a=>{const el=document.getElementById("ach-"+a.id);if(el&&a.chk(s))el.classList.add("ul");});
+}
+
+let _tt;
+function showToast(msg){
+  const t=document.getElementById("toast");
+  t.innerHTML=msg.replace(/\n/g,"<br>");
+  t.classList.add("show");clearTimeout(_tt);
+  _tt=setTimeout(()=>t.classList.remove("show"),2800);
+}
+
+function confirmReset(){
+  if(confirm("정말 처음부터 다시 시작할까요?\n쿠키 데이터도 초기화돼요! 🐶")){
+    ST={dayDone:{},taskDone:{},memos:{},bones:0,shopUsed:0,maxStreak:0,
+      petStats:{hunger:70,happy:60,energy:80,love:50}};
+    save();buildShop();buildSchedule();buildAchs();updateStats();updateDog();
+    document.querySelectorAll(".ach").forEach(e=>e.classList.remove("ul"));
+    showToast("초기화 완료! 쿠키와 새로 시작해요 🐶🌸");
+  }
+}
+
+// ══════ INIT ══════
+buildAchs();buildSchedule();buildShop();updateStats();updateDog();
+setTimeout(restoreAchs,100);
+</script>
+</body>
+</html>
